@@ -3,63 +3,89 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Group Project Simulation - Free Rider Problem</title>
+    <title>Interactive Free-Rider Simulation</title>
     <style>
-        body { font-family: Arial, sans-serif; line-height: 1.6; padding: 20px; background-color: #f4f4f4; }
-        .container { max-width: 600px; margin: auto; background: white; padding: 20px; border-radius: 8px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
-        h2 { color: #333; text-align: center; }
-        .controls { display: flex; justify-content: center; margin-bottom: 20px; }
-        button { padding: 10px 20px; font-size: 16px; cursor: pointer; background-color: #28a745; color: white; border: none; border-radius: 5px; }
-        button:hover { background-color: #218838; }
-        #log { white-space: pre-wrap; background: #222; color: #0f0; padding: 15px; border-radius: 5px; height: 300px; overflow-y: auto; font-family: monospace; }
-        .highlight { color: #ffeb3b; font-weight: bold; }
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #f0f2f5; display: flex; justify-content: center; padding: 40px; }
+        .card { background: white; padding: 30px; border-radius: 12px; box-shadow: 0 4px 20px rgba(0,0,0,0.1); width: 100%; max-width: 500px; }
+        h2 { text-align: center; color: #1a73e8; margin-bottom: 25px; }
+        .input-group { margin-bottom: 20px; }
+        label { display: block; font-weight: bold; margin-bottom: 8px; color: #555; }
+        select { width: 100%; padding: 12px; border-radius: 6px; border: 1px solid #ddd; font-size: 16px; }
+        button { width: 100%; padding: 14px; background-color: #1a73e8; color: white; border: none; border-radius: 6px; font-size: 18px; cursor: pointer; transition: background 0.3s; }
+        button:hover { background-color: #1557b0; }
+        #resultBox { margin-top: 25px; padding: 20px; border-radius: 8px; display: none; text-align: center; }
+        .win { background-color: #e6f4ea; color: #137333; border: 1px solid #ceead6; }
+        .loss { background-color: #fce8e6; color: #c5221f; border: 1px solid #fad2cf; }
+        .neutral { background-color: #f8f9fa; color: #3c4043; border: 1px solid #dadce0; }
+        .payoff-text { font-size: 24px; font-weight: bold; margin: 10px 0; }
     </style>
 </head>
 <body>
 
-<div class="container">
-    <h2>Group Project Simulation</h2>
-    <p>Scenario: Member A vs. Member B (50% Social Trust)</p>
+<div class="card">
+    <h2>Game Theory: Group Project</h2>
     
-    <div class="controls">
-        <button onclick="runSimulation()">Run 10 Rounds</button>
+    <div class="input-group">
+        <label for="playerA">Member A Choice:</label>
+        <select id="playerA">
+            <option value="Contribute">Contribute (Work Hard)</option>
+            <option value="Slack Off">Slack Off (Free-Ride)</option>
+        </select>
     </div>
 
-    <div id="log">Click the button to start simulation...</div>
+    <div class="input-group">
+        <label for="playerB">Member B Choice:</label>
+        <select id="playerB">
+            <option value="Contribute">Contribute (Work Hard)</option>
+            <option value="Slack Off">Slack Off (Free-Ride)</option>
+        </select>
+    </div>
+
+    <button onclick="calculatePayoff()">Calculate Payoff</button>
+
+    <div id="resultBox">
+        <div id="outcomeTitle" style="font-weight: bold; font-size: 18px;"></div>
+        <div class="payoff-text" id="payoffDisplay"></div>
+        <div id="explanation"></div>
+    </div>
 </div>
 
 <script>
-    // The Payoff Matrix from your project
-    const payoffs = {
-        "Contribute-Contribute": [3, 3],
-        "Contribute-Slack Off": [-1, 5],
-        "Slack Off-Contribute": [5, -1],
-        "Slack Off-Slack Off": [0, 0]
-    };
+    function calculatePayoff() {
+        const a = document.getElementById('playerA').value;
+        const b = document.getElementById('playerB').value;
+        const resBox = document.getElementById('resultBox');
+        const outcomeTitle = document.getElementById('outcomeTitle');
+        const payoffDisplay = document.getElementById('payoffDisplay');
+        const explanation = document.getElementById('explanation');
 
-    function runSimulation() {
-        const log = document.getElementById('log');
-        log.innerHTML = "--- Simulating 10 Rounds (Social Trust: 50%) ---\n\n";
-        
-        for (let i = 1; i <= 10; i++) {
-            // Determine choices (50% chance to contribute)
-            let choiceA = Math.random() < 0.5 ? "Contribute" : "Slack Off";
-            let choiceB = Math.random() < 0.5 ? "Contribute" : "Slack Off";
-            
-            let key = `${choiceA}-${choiceB}`;
-            let result = payoffs[key];
-            
-            let output = `Round ${i}: A(${choiceA}) vs B(${choiceB}) -> Payoff: [${result[0]}, ${result[1]}]\n`;
-            
-            if (choiceA === "Contribute" && choiceB === "Contribute") {
-                output += `>> <span class="highlight">SOCIAL OPTIMUM REACHED!</span> High grades for all.\n`;
-            } else if (choiceA === "Slack Off" && choiceB === "Slack Off") {
-                output += `>> <span class="highlight">NASH EQUILIBRIUM:</span> Market Failure (INC/Fail).\n`;
-            }
-            
-            log.innerHTML += output + "--------------------------------------\n";
+        resBox.style.display = "block";
+        resBox.className = ""; // Reset classes
+
+        if (a === "Contribute" && b === "Contribute") {
+            resBox.classList.add('win');
+            outcomeTitle.innerText = "SOCIAL OPTIMUM";
+            payoffDisplay.innerText = "(+3, +3)";
+            explanation.innerText = "Both worked hard. High grades for everyone!";
+        } 
+        else if (a === "Slack Off" && b === "Slack Off") {
+            resBox.classList.add('neutral');
+            outcomeTitle.innerText = "NASH EQUILIBRIUM";
+            payoffDisplay.innerText = "(0, 0)";
+            explanation.innerText = "Market Failure. No work done, failing grade.";
+        } 
+        else if (a === "Slack Off" && b === "Contribute") {
+            resBox.classList.add('win');
+            outcomeTitle.innerText = "FREE-RIDER SUCCESS";
+            payoffDisplay.innerText = "(+5, -1)";
+            explanation.innerText = "Member A slacked off but got Member B's grade.";
+        } 
+        else {
+            resBox.classList.add('loss');
+            outcomeTitle.innerText = "SUCKER'S PAYOFF";
+            payoffDisplay.innerText = "(-1, +5)";
+            explanation.innerText = "Member A did all the work while Member B slacked.";
         }
-        log.scrollTop = log.scrollHeight; // Auto-scroll to bottom
     }
 </script>
 
