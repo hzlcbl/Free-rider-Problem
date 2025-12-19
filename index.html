@@ -174,6 +174,10 @@
                 <div>Total A: <span id="summaryTotalA">0</span></div>
                 <div>Total B: <span id="summaryTotalB">0</span></div>
             </div>
+            <div id="concluBox" class="result-box" style="margin-bottom: 20px; border-color: #000;">
+                <div class="result-title" id="concluTitle"></div>
+                <div class="result-desc" id="concluDesc"></div>
+            </div>
             <div class="table-wrapper">
                 <table>
                     <thead>
@@ -262,8 +266,19 @@
         document.getElementById('resDesc').innerText = d;
         document.getElementById('resPayoff').innerText = `(${pA > 0 ? '+' : ''}${pA}, ${pB > 0 ? '+' : ''}${pB})`;
         document.getElementById('resultBox').style.display = "block";
-
-        // FIXED: Log Table Row syntax
+        
+        let h = "", k = "";
+            if (totalA > totalB) {
+                h = "MEMBER A SUCCESS"; k = "Member A received a good grade without contributing much.";
+            } else if (totalA < totalB) {
+                h = "MEMBER B SUCCESS"; k = "Member B received a good grade without contributing much.";
+            } else {
+                h = "BOTH SUCCEEDED"; k = "A and B contributed the same amount.";
+            }
+            document.getElementById('concluBox').style.display = "block";
+            document.getElementById('concluTitle').innerText = h;
+            document.getElementById('concluDesc').innerText = k;
+        
         const row = `<tr>
             <td>${roundNumber}</td>
             <td>${a} (${pA > 0 ? '+' : ''}${pA})</td>
@@ -286,7 +301,3 @@
 </script>
 </body>
 </html>
-
-
-
-
