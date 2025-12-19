@@ -3,90 +3,85 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Free Rider Problem Simulator</title>
+    <title>Free Rider Game - Tabbed View</title>
     <style>
         body {
-            background-color: #f8d7da; /* Light Pink Background */
+            background-color: #f8d7da; /* Pink Background */
             font-family: 'Arial Black', Gadget, sans-serif;
             display: flex;
             flex-direction: column;
             align-items: center;
-            padding: 50px;
+            padding: 40px;
         }
 
-        h1 {
-            font-size: 40px;
-            letter-spacing: 2px;
-            margin-bottom: 50px;
-        }
+        /* TAB SYSTEM */
+        .tab-container { width: 100%; max-width: 700px; display: none; }
+        .active { display: block; }
 
-        .container {
-            width: 100%;
-            max-width: 800px;
-        }
-
-        .input-section {
-            display: flex;
-            justify-content: space-between;
-            margin-bottom: 30px;
-        }
-
-        .player-box {
-            width: 45%;
-        }
-
-        .label {
-            font-size: 18px;
-            margin-bottom: 10px;
-            text-transform: uppercase;
-        }
-
-        select {
-            width: 100%;
-            padding: 15px;
-            font-size: 18px;
+        .nav-buttons { margin-bottom: 20px; }
+        .nav-btn {
+            background-color: #fff9c4;
             border: 2px solid #000;
-            border-radius: 5px;
-            background: white;
+            padding: 10px 20px;
+            cursor: pointer;
             font-weight: bold;
+            margin: 0 5px;
         }
 
-        button {
-    background-color: #fff9c4; /* Light Yellow from your layout */
-    border: 2px solid #000;
-    padding: 15px 30px;
-    font-size: 18px;
-    font-weight: bold;
-    cursor: pointer;
-    text-transform: uppercase;
-    
-    display: block; 
-    margin: 0 auto 40px auto; 
-    
-    border-radius: 5px; /* Optional: matches your select boxes */
-}
+        /* GAME STYLING */
+        .card { background: white; padding: 25px; border: 2px solid #000; border-radius: 15px; text-align: center; }
+        .scoreboard { display: flex; justify-content: space-around; font-size: 22px; margin-bottom: 20px; border-bottom: 2px solid #eee; padding-bottom: 10px; }
+        
+        select { width: 100%; padding: 10px; font-weight: bold; border: 2px solid #000; margin-top: 5px; }
+        
+        .main-btn {
+            background-color: #fff9c4;
+            border: 2px solid #000;
+            padding: 15px 30px;
+            font-weight: bold;
+            display: block;
+            margin: 20px auto;
+            cursor: pointer;
+        }
 
+        /* TABLE STYLING */
+        table { width: 100%; border-collapse: collapse; background: white; border: 2px solid #000; }
+        th, td { border: 1px solid #000; padding: 12px; text-align: center; font-family: Arial, sans-serif; }
+        th { background-color: #fff9c4; }
+
+        .summary-title { margin-bottom: 20px; text-align: center; }
+
+        /* NEW RESULT BOX STYLING (From your screenshots) */
         .result-box {
             background-color: #fff9c4; /* Light Yellow */
-            border: 1px solid #ddd;
-            padding: 20px;
-            margin-bottom: 15px;
+            border: 2px solid #000;
+            padding: 15px;
+            margin-top: 15px;
             border-radius: 10px;
             display: none; /* Hidden until calculated */
             text-align: left;
-            width: 100%;
+            width: 90%;
+            margin-left: auto;
+            margin-right: auto;
         }
 
         .result-title {
             font-weight: bold;
-            font-size: 20px;
-            margin-bottom: 5px;
+            font-size: 18px;
+            text-transform: uppercase;
         }
 
         .result-desc {
             font-family: Arial, sans-serif;
-            font-size: 16px;
+            font-size: 15px;
             font-weight: normal;
+            margin-top: 5px;
+        }
+
+        .payoff-display {   
+            padding: 5px;
+            margin-top: 10px;
+            font-size: 16px;
         }
     </style>
 </head>
@@ -94,72 +89,160 @@
 
     <h1>FREE RIDER PROBLEM SIMULATOR</h1>
 
-    <div class="container">
-        <div class="input-section">
-            <div class="player-box">
-                <div class="label">Member A</div>
-                <select id="playerA">
-                    <option value="Contribute">Contribute</option>
-                    <option value="Slack Off">Slack Off</option>
-                </select>
+    <div class="nav-buttons">
+        <button class="nav-btn" onclick="showTab('mechTab')">Game Mechanics</button>   
+        <button class="nav-btn" onclick="showTab('gameTab')">Game Room</button>
+        <button class="nav-btn" onclick="showTab('scoreTab')">Score Summary</button>
+    </div>
+
+    <div id="gameTab" class="tab-container">
+        <div class="card">
+            <div class="scoreboard">
+                <div>Member A: <span id="scoreA">0</span></div>
+                <div>Member B: <span id="scoreB">0</span></div>
             </div>
-            <div class="player-box">
-                <div class="label">Member B</div>
-                <select id="playerB">
-                    <option value="Contribute">Contribute</option>
-                    <option value="Slack Off">Slack Off</option>
-                </select>
+
+            <div style="display: flex; justify-content: space-between;">
+                <div style="width: 45%;">
+                    <label>MEMBER A</label>
+                    <select id="choiceA">
+                        <option value="Contribute">Contribute</option>
+                        <option value="Slack Off">Slack Off</option>
+                    </select>
+                </div>
+                <div style="width: 45%;">
+                    <label>MEMBER B</label>
+                    <select id="choiceB">
+                        <option value="Contribute">Contribute</option>
+                        <option value="Slack Off">Slack Off</option>
+                    </select>
+                </div>
+            </div>
+
+            <button class="main-btn" onclick="playRound()">CALCULATE PAYOFF</button>
+
+            <div id="resultBox" class="result-box">
+                <div class="result-title" id="resTitle"></div>
+                <div class="result-desc" id="resDesc"></div>
+                <div class="payoff-display">Payoff: <span id="resPayoff">(x, x)</span></div>
             </div>
         </div>
+    </div>
 
-        <button onclick="calculate()">Calculate Payoff</button>
-
-        <div id="resOptimum" class="result-box">
-            <div class="result-title">SOCIAL OPTIMUM REACHED!</div>
-            <div class="result-desc">Both members worked hard. Highest grade achieved! (+3, +3)</div>
+    <div id="scoreTab" class="tab-container">
+        <div class="card">
+            <h2 class="summary-title">PROJECT LOG</h2>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Round</th>
+                        <th>Member A</th>
+                        <th>Member B</th>
+                        <th>Outcome Description</th>
+                    </tr>
+                </thead>
+                <tbody id="tableBody"></tbody>
+            </table>
+            <button class="main-btn" onclick="resetAll()" style="background-color: #ffcccc;">RESET ALL DATA</button>
         </div>
+    </div>
 
-        <div id="resNash" class="result-box">
-            <div class="result-title">NASH EQUILIBRIUM (MARKET FAILURE)</div>
-            <div class="result-desc">No one contributed, therefore there is no work produced. Both receives a grade of zero. (0, 0)</div>
-        </div>
-
-        <div id="resFreeRide" class="result-box">
-            <div class="result-title">FREE-RIDER SUCCESS (MEMBER A)</div>
-            <div id="freeRideText" class="result-desc"></div>
-        </div>
-
-        <div id="resSucker" class="result-box">
-            <div class="result-title">FREE-RIDER SUCCESS (MEMBER B)</div>
-            <div id="suckerText" class="result-desc"></div>
+    <div id="mechTab" class="tab-container active">
+        <div class="card">
+            <h2 class="summary-title">GAME MECHANICS</h2>
+            <p style="font-family: Arial, sans-serif; font-size: 14px; line-height: 1.5; font-weight: normal;">In a group project, everyone must contribute their own work to expedite the process and maximize the number of ideas. If a person chooses not to cooperate with their group members, the others will have no choice but to do the remaining work that person left. Though they finished the task, the member who did not contribute will have the same grade as the team members. It is ideal that all of them decide to contribute, but if none of them choose to cooperate, they will have no output to hand in.</p>
+            <h3 style="text-align: center; color: #000000;">STRATEGIC CHOICES</h3>
+            <div style="font-family: Arial, sans-serif; font-size: 14px; line-height: 1.6; font-weight: normal; margin-bottom: 20px;">
+                <p><strong>• Cooperate (Contribute):</strong> If member A and/or B decides to put in an effort, research, and time to complete their assigned portion of the task.</p>
+                <p><strong>• Slack Off (Free-ride):</strong> If member A and/or B decides to do nothing, does not put any effort, or simply submits low-quality work, hoping for others to cover or to fix their job.</p>
+            </div>
+            <h3 style="text-align: center;">PAYOFF MATRIX</h3>
+            <table style="width: 100%; border-collapse: collapse; margin-top: 10px;">
+                <tr>
+                    <th style="background: #eee; border: 1px solid #000;">Member A \ Member B</th>
+                    <th style="background: #fff9c4; border: 1px solid #000;">Contribute</th>
+                    <th style="background: #fff9c4; border: 1px solid #000;">Slack Off</th>
+                </tr>
+                <tr>
+                    <td style="background: #fff9c4; border: 1px solid #000; font-weight: bold; text-align: center;">Contribute</td>
+                    <td style="border: 1px solid #000; text-align: center;">(+3, +3)<br><small>Social Optimum</small></td>
+                    <td style="border: 1px solid #000; text-align: center;">(-1, +5)<br><small>Free-Rider Success (B)</small></td>
+                </tr>
+                <tr>
+                    <td style="background: #fff9c4; border: 1px solid #000; font-weight: bold; text-align: center;">Slack Off</td>
+                    <td style="border: 1px solid #000; text-align: center;">(+5, -1)<br><small>Free-Rider Success (A)</small></td>
+                    <td style="border: 1px solid #000; text-align: center;">(0, 0)<br><small>Nash Equilibrium</small></td>
+                </tr>
+            </table>
         </div>
     </div>
 
     <script>
-        function calculate() {
-            // Hide all boxes first
-            document.querySelectorAll('.result-box').forEach(box => box.style.display = 'none');
+        let totalA = 0;
+        let totalB = 0;
+        let roundNumber = 0;
+
+        function showTab(tabId) {
+            document.querySelectorAll('.tab-container').forEach(tab => tab.classList.remove('active'));
+            document.getElementById(tabId).classList.add('active');
+        }
+
+        function playRound() {
+            roundNumber++;
+            const a = document.getElementById('choiceA').value;
+            const b = document.getElementById('choiceB').value;
             
-            const a = document.getElementById('playerA').value;
-            const b = document.getElementById('playerB').value;
+            let payA = 0, payB = 0, desc = "", title = "";
 
             if (a === "Contribute" && b === "Contribute") {
-                document.getElementById('resOptimum').style.display = 'block';
-            } 
-            else if (a === "Slack Off" && b === "Slack Off") {
-                document.getElementById('resNash').style.display = 'block';
-            } 
-            else if (a === "Slack Off" && b === "Contribute") {
-                document.getElementById('resFreeRide').style.display = 'block';
-                document.getElementById('freeRideText').innerText = "Member A didn't do anything while Member B did all the work but they received the same grade. (+5, -1)";
-            } 
-            else if (a === "Contribute" && b === "Slack Off") {
-                document.getElementById('resSucker').style.display = 'block';
-                document.getElementById('suckerText').innerText = "Member A did all the work while Member B didn't do anything but they received the same grade. (-1, +5)";
+                payA = 3; payB = 3; 
+                title = "SOCIAL OPTIMUM REACHED!";
+                desc = "Both members worked hard and earned the highest collective grade.";
+            } else if (a === "Slack Off" && b === "Slack Off") {
+                payA = 0; payB = 0; 
+                title = "NASH EQUILIBRIUM (MARKET FAILURE)";
+                desc = "No one cooperated. The project failed and both received zero.";
+            } else if (a === "Slack Off" && b === "Contribute") {
+                payA = 5; payB = -1; 
+                title = "FREE-RIDER SUCCESS (MEMBER A)";
+                desc = "Member A didn't do anything while Member B did all the work but they received the same grade.";
+            } else {
+                payA = -1; payB = 5; 
+                title = "FREE-RIDER SUCCESS (MEMBER B)";
+                desc = "Member B didn't do anything while Member A did all the work but they received the same grade.";
             }
+
+            totalA += payA;
+            totalB += payB;
+
+            // Update UI Scoreboard
+            document.getElementById('scoreA').innerText = totalA;
+            document.getElementById('scoreB').innerText = totalB;
+
+            // Update Result Box (The Pink/Yellow display you wanted)
+            document.getElementById('resultBox').style.display = "block";
+            document.getElementById('resTitle').innerText = title;
+            document.getElementById('resDesc').innerText = desc;
+            document.getElementById('resPayoff').innerText = `(${payA >= 0 ? '+' : ''}${payA}, ${payB >= 0 ? '+' : ''}${payB})`;
+
+            // Add to Table
+            const row = `<tr>
+                <td>${roundNumber}</td>
+                <td>${a} (${payA})</td>
+                <td>${b} (${payB})</td>
+                <td>${title}</td>
+            </tr>`;
+            document.getElementById('tableBody').innerHTML += row;
+        }
+
+        function resetAll() {
+            totalA = 0; totalB = 0; roundNumber = 0;
+            document.getElementById('scoreA').innerText = "0";
+            document.getElementById('scoreB').innerText = "0";
+            document.getElementById('tableBody').innerHTML = "";
+            document.getElementById('resultBox').style.display = "none";
+            showTab('gameTab');
         }
     </script>
 </body>
 </html>
-
-
