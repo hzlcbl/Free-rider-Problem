@@ -224,49 +224,69 @@
     </div>
 
     <script>
-        let totalA = 0, totalB = 0, roundNumber = 0;
+    let totalA = 0, totalB = 0, roundNumber = 0;
 
-        function showTab(tabId) {
-            document.querySelectorAll('.tab-container').forEach(t => t.classList.remove('active'));
-            document.getElementById(tabId).classList.add('active');
+    function showTab(tabId) {
+        document.querySelectorAll('.tab-container').forEach(t => t.classList.remove('active'));
+        document.getElementById(tabId).classList.add('active');
+    }
+
+    function playRound() {
+        roundNumber++;
+        const a = document.getElementById('choiceA').value;
+        const b = document.getElementById('choiceB').value;
+        let pA = 0, pB = 0, t = "", d = "";
+
+        if (a === "Contribute" && b === "Contribute") { 
+            pA = 3; pB = 3; t = "SOCIAL OPTIMUM"; d = "Both worked hard and achieved the highest grade."; 
+        } else if (a === "Slack Off" && b === "Slack Off") { 
+            pA = 0; pB = 0; t = "NASH EQUILIBRIUM"; d = "Project failed, no work was produced."; 
+        } else if (a === "Slack Off") { 
+            pA = 5; pB = -1; t = "FREE-RIDER SUCCESS (A)"; d = "A slacked, B worked, but both received the same grade."; 
+        } else { 
+            pA = -1; pB = 5; t = "FREE-RIDER SUCCESS (B)"; d = "B slacked, A worked, but both received the same grade."; 
         }
 
-        function playRound() {
-            roundNumber++;
-            const a = document.getElementById('choiceA').value;
-            const b = document.getElementById('choiceB').value;
-            let pA = 0, pB = 0, t = "", d = "";
+        totalA += pA; totalB += pB;
+        
+        // Update Game Room Scores
+        document.getElementById('scoreA').innerText = totalA;
+        document.getElementById('scoreB').innerText = totalB;
+        
+        // Update Summary Totals
+        document.getElementById('summaryTotalA').innerText = totalA;
+        document.getElementById('summaryTotalB').innerText = totalB;
 
-            if (a === "Contribute" && b === "Contribute") { pA = 3; pB = 3; t = "SOCIAL OPTIMUM"; d = "Both worked hard and achieved the highest grade."; }
-            else if (a === "Slack Off" && b === "Slack Off") { pA = 0; pB = 0; t = "NASH EQUILIBRIUM"; d = "Project failed, no work was produced."; }
-            else if (a === "Slack Off") { pA = 5; pB = -1; t = "FREE-RIDER SUCCESS (A)"; d = "A slacked, B worked, but both received the same grade."; }
-            else { pA = -1; pB = 5; t = "FREE-RIDER SUCCESS (B)"; d = "B slacked, A worked, but both received the same grade."; }
+        // Update Result Box in Game Room
+        document.getElementById('resTitle').innerText = t;
+        document.getElementById('resDesc').innerText = d;
+        document.getElementById('resPayoff').innerText = `(${pA > 0 ? '+' : ''}${pA}, ${pB > 0 ? '+' : ''}${pB})`;
+        document.getElementById('resultBox').style.display = "block";
 
-            totalA += pA; totalB += pB;
-            document.getElementById('scoreA').innerText = totalA;
-            document.getElementById('scoreB').innerText = totalB;
-            document.getElementById('summaryTotalA').innerText = totalA;
-            document.getElementById('summaryTotalB').innerText = totalB;
+        // FIXED: Log Table Row syntax
+        const row = `<tr>
+            <td>${roundNumber}</td>
+            <td>${a} (${pA > 0 ? '+' : ''}${pA})</td>
+            <td>${b} (${pB > 0 ? '+' : ''}${pB})</td>
+            <td>${t}</td>
+        </tr>`;
+        document.getElementById('tableBody').innerHTML += row;
+    }
 
-            document.getElementById('resTitle').innerText = t;
-            document.getElementById('resDesc').innerText = d;
-            document.getElementById('resPayoff').innerText = `(${pA > 0 ? '+' : ''}${pA}, ${pB > 0 ? '+' : ''}${pB})`;
-            document.getElementById('resultBox').style.display = "block";
-
-            const row = `<tr><td>${roundNumber}</td><td>${a.split(' ')[0] ({$pA})}</td><td>${b.split(' ')[0] ({$pB})}</td><td>${d}</td></tr>`;
-            document.getElementById('tableBody').innerHTML += row;
-        }
-
-        function resetAll() {
-            totalA = 0; totalB = 0; roundNumber = 0;
-            document.querySelectorAll('#scoreA, #scoreB, #summaryTotalA, #summaryTotalB').forEach(e => e.innerText = "0");
-            document.getElementById('tableBody').innerHTML = "";
-            document.getElementById('resultBox').style.display = "none";
-            showTab('gameTab');
-        }
-    </script>
+    function resetAll() {
+        totalA = 0; totalB = 0; roundNumber = 0;
+        document.getElementById('scoreA').innerText = "0";
+        document.getElementById('scoreB').innerText = "0";
+        document.getElementById('summaryTotalA').innerText = "0";
+        document.getElementById('summaryTotalB').innerText = "0";
+        document.getElementById('tableBody').innerHTML = "";
+        document.getElementById('resultBox').style.display = "none";
+        showTab('gameTab');
+    }
+</script>
 </body>
 </html>
+
 
 
 
