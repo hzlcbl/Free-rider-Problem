@@ -3,85 +3,123 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Free Rider Game - Tabbed View</title>
+    <title>Free Rider Game - Mobile Responsive</title>
     <style>
+        /* BASE STYLES */
         body {
             background-color: #f8d7da; /* Pink Background */
             font-family: 'Arial Black', Gadget, sans-serif;
             display: flex;
             flex-direction: column;
             align-items: center;
-            padding: 40px;
+            padding: 20px;
+            margin: 0;
+        }
+
+        h1 { 
+            font-size: 24px; 
+            text-align: center; 
+            margin: 20px 0; 
         }
 
         /* TAB SYSTEM */
         .tab-container { width: 100%; max-width: 700px; display: none; }
         .active { display: block; }
 
-        .nav-buttons { margin-bottom: 20px; }
+        .nav-buttons { 
+            display: flex; 
+            flex-wrap: wrap; 
+            justify-content: center; 
+            gap: 10px; 
+            margin-bottom: 20px; 
+        }
+        
         .nav-btn {
             background-color: #fff9c4;
             border: 2px solid #000;
-            padding: 10px 20px;
+            padding: 10px 15px;
             cursor: pointer;
             font-weight: bold;
-            margin: 0 5px;
+            font-size: 14px;
+            flex: 1 1 auto; /* Allows buttons to resize on mobile */
+            max-width: 150px;
         }
 
         /* GAME STYLING */
-        .card { background: white; padding: 25px; border: 2px solid #000; border-radius: 15px; text-align: center; }
-        .scoreboard { display: flex; justify-content: space-around; font-size: 22px; margin-bottom: 20px; border-bottom: 2px solid #eee; padding-bottom: 10px; }
+        .card { 
+            background: white; 
+            padding: 20px; 
+            border: 2px solid #000; 
+            border-radius: 15px; 
+            text-align: center; 
+            box-sizing: border-box;
+        }
+
+        .scoreboard { 
+            display: flex; 
+            justify-content: space-around; 
+            font-size: 18px; 
+            margin-bottom: 20px; 
+            border-bottom: 2px solid #eee; 
+            padding-bottom: 10px; 
+        }
         
-        select { width: 100%; padding: 10px; font-weight: bold; border: 2px solid #000; margin-top: 5px; }
+        .selection-container {
+            display: flex; 
+            justify-content: space-between;
+            gap: 15px;
+        }
+
+        .player-input { width: 48%; }
+        
+        select { 
+            width: 100%; 
+            padding: 12px; 
+            font-weight: bold; 
+            border: 2px solid #000; 
+            margin-top: 5px; 
+            font-size: 16px; /* Prevents iOS auto-zoom */
+        }
         
         .main-btn {
             background-color: #fff9c4;
             border: 2px solid #000;
-            padding: 15px 30px;
+            padding: 15px 20px;
             font-weight: bold;
             display: block;
             margin: 20px auto;
             cursor: pointer;
+            width: 100%;
+            max-width: 300px;
         }
 
-        /* TABLE STYLING */
-        table { width: 100%; border-collapse: collapse; background: white; border: 2px solid #000; }
-        th, td { border: 1px solid #000; padding: 12px; text-align: center; font-family: Arial, sans-serif; }
+        /* TABLE STYLING - RESPONSIVE */
+        .table-wrapper { overflow-x: auto; } /* Scroll table on small screens */
+        table { width: 100%; border-collapse: collapse; background: white; border: 2px solid #000; font-size: 13px; }
+        th, td { border: 1px solid #000; padding: 10px; text-align: center; font-family: Arial, sans-serif; }
         th { background-color: #fff9c4; }
 
-        .summary-title { margin-bottom: 20px; text-align: center; }
-
-        /* NEW RESULT BOX STYLING (From your screenshots) */
         .result-box {
-            background-color: #fff9c4; /* Light Yellow */
+            background-color: #fff9c4;
             border: 2px solid #000;
             padding: 15px;
             margin-top: 15px;
             border-radius: 10px;
-            display: none; /* Hidden until calculated */
+            display: none;
             text-align: left;
-            width: 90%;
-            margin-left: auto;
-            margin-right: auto;
         }
 
-        .result-title {
-            font-weight: bold;
-            font-size: 18px;
-            text-transform: uppercase;
-        }
+        .result-title { font-weight: bold; font-size: 16px; text-transform: uppercase; }
+        .result-desc { font-family: Arial, sans-serif; font-size: 14px; font-weight: normal; margin: 5px 0; }
+        .payoff-display { font-weight: bold; font-size: 16px; color: #d63384; }
 
-        .result-desc {
-            font-family: Arial, sans-serif;
-            font-size: 15px;
-            font-weight: normal;
-            margin-top: 5px;
-        }
-
-        .payoff-display {   
-            padding: 5px;
-            margin-top: 10px;
-            font-size: 16px;
+        /* MOBILE ADJUSTMENTS */
+        @media (max-width: 480px) {
+            h1 { font-size: 20px; }
+            .selection-container { flex-direction: column; }
+            .player-input { width: 100%; margin-bottom: 15px; }
+            .scoreboard { font-size: 16px; flex-direction: column; gap: 5px; }
+            .nav-btn { font-size: 12px; padding: 8px; }
         }
     </style>
 </head>
@@ -90,9 +128,9 @@
     <h1>FREE RIDER PROBLEM SIMULATOR</h1>
 
     <div class="nav-buttons">
-        <button class="nav-btn" onclick="showTab('mechTab')">Game Mechanics</button>   
+        <button class="nav-btn" onclick="showTab('mechTab')">Mechanics</button>   
         <button class="nav-btn" onclick="showTab('gameTab')">Game Room</button>
-        <button class="nav-btn" onclick="showTab('scoreTab')">Score Summary</button>
+        <button class="nav-btn" onclick="showTab('scoreTab')">Summary</button>
     </div>
 
     <div id="gameTab" class="tab-container">
@@ -100,159 +138,3 @@
             <div class="scoreboard">
                 <div>Member A: <span id="scoreA">0</span></div>
                 <div>Member B: <span id="scoreB">0</span></div>
-            </div>
-
-            <div style="display: flex; justify-content: space-between;">
-                <div style="width: 45%;">
-                    <label>MEMBER A</label>
-                    <select id="choiceA">
-                        <option value="Contribute">Contribute</option>
-                        <option value="Slack Off">Slack Off</option>
-                    </select>
-                </div>
-                <div style="width: 45%;">
-                    <label>MEMBER B</label>
-                    <select id="choiceB">
-                        <option value="Contribute">Contribute</option>
-                        <option value="Slack Off">Slack Off</option>
-                    </select>
-                </div>
-            </div>
-
-            <button class="main-btn" onclick="playRound()">CALCULATE PAYOFF</button>
-
-            <div id="resultBox" class="result-box">
-                <div class="result-title" id="resTitle"></div>
-                <div class="result-desc" id="resDesc"></div>
-                <div class="payoff-display">Payoff: <span id="resPayoff">(x, x)</span></div>
-            </div>
-        </div>
-    </div>
-
-    <div id="scoreTab" class="tab-container">
-    <div class="card">
-        <h2 class="summary-title">PROJECT OUTCOME</h2>
-
-        <div class="scoreboard" style="margin-bottom: 20px; border-radius: 10px;">
-            <div>Total Member A: <span id="summaryTotalA">0</span></div>
-            <div>Total Member B: <span id="summaryTotalB">0</span></div>
-        </div>
-
-        <table>
-            <thead>
-                <tr>
-                    <th>Round</th>
-                    <th>Member A</th>
-                    <th>Member B</th>
-                    <th>Outcome Description</th>
-                </tr>
-            </thead>
-            <tbody id="tableBody"></tbody>
-        </table>
-        <button class="main-btn" onclick="resetAll()" style="background-color: #ffcccc;">RESET ALL DATA</button>
-    </div>
-</div>
-
-    <div id="mechTab" class="tab-container active">
-        <div class="card">
-            <h2 class="summary-title">GAME MECHANICS</h2>
-            <p style="font-family: Arial, sans-serif; font-size: 14px; line-height: 1.5; font-weight: normal;">In a group project, everyone must contribute their own work to expedite the process and maximize the number of ideas. If a person chooses not to cooperate with their group members, the others will have no choice but to do the remaining work that person left. Though they finished the task, the member who did not contribute will have the same grade as the team members. It is ideal that all of them decide to contribute, but if none of them choose to cooperate, they will have no output to hand in.</p>
-            <h3 style="text-align: center; color: #000000;">STRATEGIC CHOICES</h3>
-            <div style="font-family: Arial, sans-serif; font-size: 14px; line-height: 1.6; font-weight: normal; margin-bottom: 20px;">
-                <p><strong>• Cooperate (Contribute):</strong> If member A and/or B decides to put in an effort, research, and time to complete their assigned portion of the task.</p>
-                <p><strong>• Slack Off (Free-ride):</strong> If member A and/or B decides to do nothing, does not put any effort, or simply submits low-quality work, hoping for others to cover or to fix their job.</p>
-            </div>
-            <h3 style="text-align: center;">PAYOFF MATRIX</h3>
-            <table style="width: 100%; border-collapse: collapse; margin-top: 10px;">
-                <tr>
-                    <th style="background: #eee; border: 1px solid #000;">Member A \ Member B</th>
-                    <th style="background: #fff9c4; border: 1px solid #000;">Contribute</th>
-                    <th style="background: #fff9c4; border: 1px solid #000;">Slack Off</th>
-                </tr>
-                <tr>
-                    <td style="background: #fff9c4; border: 1px solid #000; font-weight: bold; text-align: center;">Contribute</td>
-                    <td style="border: 1px solid #000; text-align: center;">(+3, +3)<br><small>Social Optimum</small></td>
-                    <td style="border: 1px solid #000; text-align: center;">(-1, +5)<br><small>Free-Rider Success (B)</small></td>
-                </tr>
-                <tr>
-                    <td style="background: #fff9c4; border: 1px solid #000; font-weight: bold; text-align: center;">Slack Off</td>
-                    <td style="border: 1px solid #000; text-align: center;">(+5, -1)<br><small>Free-Rider Success (A)</small></td>
-                    <td style="border: 1px solid #000; text-align: center;">(0, 0)<br><small>Nash Equilibrium</small></td>
-                </tr>
-            </table>
-        </div>
-    </div>
-
-    <script>
-        let totalA = 0;
-        let totalB = 0;
-        let roundNumber = 0;
-
-        function showTab(tabId) {
-            document.querySelectorAll('.tab-container').forEach(tab => tab.classList.remove('active'));
-            document.getElementById(tabId).classList.add('active');
-        }
-
-        function playRound() {
-    roundNumber++;
-    const a = document.getElementById('choiceA').value;
-    const b = document.getElementById('choiceB').value;
-    
-    let payA = 0, payB = 0, desc = "", title = "";
-
-    // 1. Math Logic based on your Payoff Matrix
-    if (a === "Contribute" && b === "Contribute") {
-        payA = 3; payB = 3; 
-        title = "SOCIAL OPTIMUM REACHED!";
-        desc = "Both members worked hard and achieved the highest possible grade.";
-    } else if (a === "Slack Off" && b === "Slack Off") {
-        payA = 0; payB = 0; 
-        title = "NASH EQUILIBRIUM (MARKET FAILURE)";
-        desc = "No one cooperated, no work produced.";
-    } else if (a === "Slack Off") {
-        payA = 5; payB = -1; 
-        title = "FREE-RIDER SUCCESS (MEMBER A)";
-        desc = "A slacked while B did all the work.";
-    } else {
-        payA = -1; payB = 5; 
-        title = "FREE-RIDER SUCCESS (MEMBER B)";
-        desc = "B slacked while A did all the work.";
-    }
-
-    // 2. Add to Totals
-    totalA += payA;
-    totalB += payB;
-
-    // 3. Update Game Room Display
-    document.getElementById('scoreA').innerText = totalA;
-    document.getElementById('scoreB').innerText = totalB;
-
-    // 4. Update Score Summary Display (NEW)
-    document.getElementById('summaryTotalA').innerText = totalA;
-    document.getElementById('summaryTotalB').innerText = totalB;
-
-    // 5. Update Log Table
-    const row = `<tr><td>${roundNumber}</td><td>${a} (${payA})</td><td>${b} (${payB})</td><td>${desc}</td></tr>`;
-    document.getElementById('tableBody').innerHTML += row;
-
-    // 3.5 Update the Result Box content and make it visible
-    document.getElementById('resTitle').innerText = title;
-    document.getElementById('resDesc').innerText = desc;
-    document.getElementById('resPayoff').innerText = `(${payA}, ${payB})`;
-    document.getElementById('resultBox').style.display = "block";
-}
-
-// 6. Update Reset Function to clear both displays
-function resetAll() {
-    totalA = 0; totalB = 0; roundNumber = 0;
-    document.getElementById('scoreA').innerText = "0";
-    document.getElementById('scoreB').innerText = "0";
-    document.getElementById('summaryTotalA').innerText = "0";
-    document.getElementById('summaryTotalB').innerText = "0";
-    document.getElementById('tableBody').innerHTML = "";
-    document.getElementById('resultBox').style.display = "none";
-    showTab('gameTab');
-}
-    </script>
-</body>
-</html>
