@@ -204,11 +204,11 @@
     if (a === "Contribute" && b === "Contribute") {
         payA = 3; payB = 3; 
         title = "SOCIAL OPTIMUM REACHED!";
-        desc = "Both members worked hard (+3 each).";
+        desc = "Both members worked hard and achieved the highest possible grade.";
     } else if (a === "Slack Off" && b === "Slack Off") {
         payA = 0; payB = 0; 
         title = "NASH EQUILIBRIUM (MARKET FAILURE)";
-        desc = "No one cooperated (0 each).";
+        desc = "No one cooperated, no work produced.";
     } else if (a === "Slack Off") {
         payA = 5; payB = -1; 
         title = "FREE-RIDER SUCCESS (MEMBER A)";
@@ -232,8 +232,14 @@
     document.getElementById('summaryTotalB').innerText = totalB;
 
     // 5. Update Log Table
-    const row = `<tr><td>${roundNumber}</td><td>${a}</td><td>${b}</td><td>${desc}</td></tr>`;
+    const row = `<tr><td>${roundNumber}</td><td>${a} (${payA})</td><td>${b} (${payB})</td><td>${desc}</td></tr>`;
     document.getElementById('tableBody').innerHTML += row;
+
+    // 3.5 Update the Result Box content and make it visible
+    document.getElementById('resTitle').innerText = title;
+    document.getElementById('resDesc').innerText = desc;
+    document.getElementById('resPayoff').innerText = `(${payA}, ${payB})`;
+    document.getElementById('resultBox').style.display = "block";
 }
 
 // 6. Update Reset Function to clear both displays
