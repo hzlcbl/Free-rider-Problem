@@ -204,7 +204,7 @@
                 <h3 style="text-align: center;">PAYOFF MATRIX</h3>
             <table style="width: 100%; border-collapse: collapse; margin-top: 10px;">
                 <tr>
-                    <th style="background: #eee; border: 1px solid #000;">Member A \ Member B</th>
+                    <th style="background: #fff9c4; border: 1px solid #000;">Member A \ Member B</th>
                     <th style="background: #fff9c4; border: 1px solid #000;">Contribute</th>
                     <th style="background: #fff9c4; border: 1px solid #000;">Slack Off</th>
                 </tr>
@@ -239,8 +239,8 @@
 
             if (a === "Contribute" && b === "Contribute") { pA = 3; pB = 3; t = "SOCIAL OPTIMUM"; d = "Both worked hard and achieved the highest grade."; }
             else if (a === "Slack Off" && b === "Slack Off") { pA = 0; pB = 0; t = "NASH EQUILIBRIUM"; d = "Project failed, no work was produced."; }
-            else if (a === "Slack Off") { pA = 5; pB = -1; t = "FREE-RIDER SUCCESS (A)"; d = "A slacked, B worked but both received the same grade."; }
-            else { pA = -1; pB = 5; t = "FREE-RIDER SUCCESS (B)"; d = "B slacked, A worked but both received the same grade."; }
+            else if (a === "Slack Off") { pA = 5; pB = -1; t = "FREE-RIDER SUCCESS (A)"; d = "A slacked, B worked, but both received the same grade."; }
+            else { pA = -1; pB = 5; t = "FREE-RIDER SUCCESS (B)"; d = "B slacked, A worked, but both received the same grade."; }
 
             totalA += pA; totalB += pB;
             document.getElementById('scoreA').innerText = totalA;
@@ -253,7 +253,7 @@
             document.getElementById('resPayoff').innerText = `(${pA > 0 ? '+' : ''}${pA}, ${pB > 0 ? '+' : ''}${pB})`;
             document.getElementById('resultBox').style.display = "block";
 
-            const row = `<tr><td>${roundNumber}</td><td>${a.split(' ')[0]}</td><td>${b.split(' ')[0]}</td><td>${t}</td></tr>`;
+            const row = `<tr><td>${roundNumber}</td><td>${a.split(' ')[0] ({$pA})}</td><td>${b.split(' ')[0] ({$pB})}</td><td>${d}</td></tr>`;
             document.getElementById('tableBody').innerHTML += row;
         }
 
@@ -267,5 +267,6 @@
     </script>
 </body>
 </html>
+
 
 
