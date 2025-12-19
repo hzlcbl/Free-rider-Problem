@@ -130,22 +130,28 @@
     </div>
 
     <div id="scoreTab" class="tab-container">
-        <div class="card">
-            <h2 class="summary-title">PROJECT LOG</h2>
-            <table>
-                <thead>
-                    <tr>
-                        <th>Round</th>
-                        <th>Member A</th>
-                        <th>Member B</th>
-                        <th>Outcome Description</th>
-                    </tr>
-                </thead>
-                <tbody id="tableBody"></tbody>
-            </table>
-            <button class="main-btn" onclick="resetAll()" style="background-color: #ffcccc;">RESET ALL DATA</button>
+    <div class="card">
+        <h2 class="summary-title">PROJECT OUTCOME</h2>
+
+        <div class="scoreboard" style="margin-bottom: 20px; border-radius: 10px;">
+            <div>Total Member A: <span id="summaryTotalA">0</span></div>
+            <div>Total Member B: <span id="summaryTotalB">0</span></div>
         </div>
+
+        <table>
+            <thead>
+                <tr>
+                    <th>Round</th>
+                    <th>Member A</th>
+                    <th>Member B</th>
+                    <th>Outcome Description</th>
+                </tr>
+            </thead>
+            <tbody id="tableBody"></tbody>
+        </table>
+        <button class="main-btn" onclick="resetAll()" style="background-color: #ffcccc;">RESET ALL DATA</button>
     </div>
+</div>
 
     <div id="mechTab" class="tab-container active">
         <div class="card">
@@ -188,61 +194,59 @@
         }
 
         function playRound() {
-            roundNumber++;
-            const a = document.getElementById('choiceA').value;
-            const b = document.getElementById('choiceB').value;
-            
-            let payA = 0, payB = 0, desc = "", title = "";
+    roundNumber++;
+    const a = document.getElementById('choiceA').value;
+    const b = document.getElementById('choiceB').value;
+    
+    let payA = 0, payB = 0, desc = "", title = "";
 
-            if (a === "Contribute" && b === "Contribute") {
-                payA = 3; payB = 3; 
-                title = "SOCIAL OPTIMUM REACHED!";
-                desc = "Both members worked hard and earned the highest collective grade.";
-            } else if (a === "Slack Off" && b === "Slack Off") {
-                payA = 0; payB = 0; 
-                title = "NASH EQUILIBRIUM (MARKET FAILURE)";
-                desc = "No one cooperated. The project failed and both received zero.";
-            } else if (a === "Slack Off" && b === "Contribute") {
-                payA = 5; payB = -1; 
-                title = "FREE-RIDER SUCCESS (MEMBER A)";
-                desc = "Member A didn't do anything while Member B did all the work but they received the same grade.";
-            } else {
-                payA = -1; payB = 5; 
-                title = "FREE-RIDER SUCCESS (MEMBER B)";
-                desc = "Member B didn't do anything while Member A did all the work but they received the same grade.";
-            }
+    // 1. Math Logic based on your Payoff Matrix
+    if (a === "Contribute" && b === "Contribute") {
+        payA = 3; payB = 3; 
+        title = "SOCIAL OPTIMUM REACHED!";
+        desc = "Both members worked hard (+3 each).";
+    } else if (a === "Slack Off" && b === "Slack Off") {
+        payA = 0; payB = 0; 
+        title = "NASH EQUILIBRIUM (MARKET FAILURE)";
+        desc = "No one cooperated (0 each).";
+    } else if (a === "Slack Off") {
+        payA = 5; payB = -1; 
+        title = "FREE-RIDER SUCCESS (MEMBER A)";
+        desc = "A slacked while B did all the work.";
+    } else {
+        payA = -1; payB = 5; 
+        title = "FREE-RIDER SUCCESS (MEMBER B)";
+        desc = "B slacked while A did all the work.";
+    }
 
-            totalA += payA;
-            totalB += payB;
+    // 2. Add to Totals
+    totalA += payA;
+    totalB += payB;
 
-            // Update UI Scoreboard
-            document.getElementById('scoreA').innerText = totalA;
-            document.getElementById('scoreB').innerText = totalB;
+    // 3. Update Game Room Display
+    document.getElementById('scoreA').innerText = totalA;
+    document.getElementById('scoreB').innerText = totalB;
 
-            // Update Result Box (The Pink/Yellow display you wanted)
-            document.getElementById('resultBox').style.display = "block";
-            document.getElementById('resTitle').innerText = title;
-            document.getElementById('resDesc').innerText = desc;
-            document.getElementById('resPayoff').innerText = `(${payA >= 0 ? '+' : ''}${payA}, ${payB >= 0 ? '+' : ''}${payB})`;
+    // 4. Update Score Summary Display (NEW)
+    document.getElementById('summaryTotalA').innerText = totalA;
+    document.getElementById('summaryTotalB').innerText = totalB;
 
-            // Add to Table
-            const row = `<tr>
-                <td>${roundNumber}</td>
-                <td>${a} (${payA})</td>
-                <td>${b} (${payB})</td>
-                <td>${title}</td>
-            </tr>`;
-            document.getElementById('tableBody').innerHTML += row;
-        }
+    // 5. Update Log Table
+    const row = `<tr><td>${roundNumber}</td><td>${a}</td><td>${b}</td><td>${desc}</td></tr>`;
+    document.getElementById('tableBody').innerHTML += row;
+}
 
-        function resetAll() {
-            totalA = 0; totalB = 0; roundNumber = 0;
-            document.getElementById('scoreA').innerText = "0";
-            document.getElementById('scoreB').innerText = "0";
-            document.getElementById('tableBody').innerHTML = "";
-            document.getElementById('resultBox').style.display = "none";
-            showTab('gameTab');
-        }
+// 6. Update Reset Function to clear both displays
+function resetAll() {
+    totalA = 0; totalB = 0; roundNumber = 0;
+    document.getElementById('scoreA').innerText = "0";
+    document.getElementById('scoreB').innerText = "0";
+    document.getElementById('summaryTotalA').innerText = "0";
+    document.getElementById('summaryTotalB').innerText = "0";
+    document.getElementById('tableBody').innerHTML = "";
+    document.getElementById('resultBox').style.display = "none";
+    showTab('gameTab');
+}
     </script>
 </body>
 </html>
